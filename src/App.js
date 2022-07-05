@@ -8,6 +8,11 @@ const App = () => {
 	const [user, setUser] = useState(null);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [errorMessage, setErrorMessage] = useState(null);
+	const [title, setTitle] = useState("");
+	const [author, setAuthor] = useState("");
+	const [url, setURL] = useState("");
+
 	useEffect(() => {
 		blogService.getAll().then((blogs) => setBlogs(blogs));
 	}, []);
@@ -23,7 +28,22 @@ const App = () => {
 
 	const verifyLogin = () => {
 		if (user) {
-			return <Blog blogs={blogs} user={user.name} setUser={setUser} />;
+			return (
+				<Blog
+					title={title}
+					author={author}
+					url={url}
+					setTitle={setTitle}
+					setAuthor={setAuthor}
+					setURL={setURL}
+					blogs={blogs}
+					setBlogs={setBlogs}
+					user={user.name}
+					setUser={setUser}
+					errorMessage={errorMessage}
+					setErrorMessage={setErrorMessage}
+				/>
+			);
 		}
 
 		return (
@@ -33,6 +53,8 @@ const App = () => {
 				password={password}
 				setPassword={setPassword}
 				setUser={setUser}
+				errorMessage={errorMessage}
+				setErrorMessage={setErrorMessage}
 			/>
 		);
 	};
