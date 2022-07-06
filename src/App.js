@@ -8,10 +8,7 @@ const App = () => {
 	const [user, setUser] = useState(null);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
-	const [errorMessage, setErrorMessage] = useState(null);
-	const [title, setTitle] = useState("");
-	const [author, setAuthor] = useState("");
-	const [url, setURL] = useState("");
+	const [message, setMessage] = useState([]);
 
 	useEffect(() => {
 		blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -30,18 +27,12 @@ const App = () => {
 		if (user) {
 			return (
 				<Blog
-					title={title}
-					author={author}
-					url={url}
-					setTitle={setTitle}
-					setAuthor={setAuthor}
-					setURL={setURL}
 					blogs={blogs}
 					setBlogs={setBlogs}
 					user={user.name}
 					setUser={setUser}
-					errorMessage={errorMessage}
-					setErrorMessage={setErrorMessage}
+					message={message}
+					setMessage={setMessage}
 				/>
 			);
 		}
@@ -53,8 +44,8 @@ const App = () => {
 				password={password}
 				setPassword={setPassword}
 				setUser={setUser}
-				errorMessage={errorMessage}
-				setErrorMessage={setErrorMessage}
+				message={message}
+				setMessage={setMessage}
 			/>
 		);
 	};

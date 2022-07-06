@@ -1,9 +1,9 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
-import ErrorHandler from "./ErrorHandler";
+import Notification from "./Notification";
 
 const Blog = (props) => {
-	const { blogs, setBlogs, user, setUser, errorMessage, setErrorMessage } = props;
+	const { blogs, setBlogs, user, setUser, message, setMessage } = props;
 	const [title, setTitle] = useState("");
 	const [author, setAuthor] = useState("");
 	const [url, setURL] = useState("");
@@ -18,14 +18,22 @@ const Blog = (props) => {
 				url,
 			});
 			const blogCopy = [...blogs, response];
+			const msg = [true, `"${title}" by ${author} has been added!`];
+
 			setBlogs(blogCopy);
 			setTitle("");
 			setAuthor("");
 			setURL("");
-		} catch (error) {
-			setErrorMessage("Username/Password is wrong");
+			setMessage(msg);
 			setTimeout(() => {
-				setErrorMessage(null);
+				setMessage([]);
+			}, 5000);
+		} catch (error) {
+			const msg = [false, `${title} not added. Try again later`];
+
+			setMessage(msg);
+			setTimeout(() => {
+				setMessage([]);
 			}, 5000);
 		}
 	};
@@ -47,7 +55,6 @@ const Blog = (props) => {
 					<br />
 
 					<button type='submit'>Add</button>
-					<ErrorHandler error={errorMessage} />
 				</form>
 			</div>
 		);
@@ -71,6 +78,7 @@ const Blog = (props) => {
 				</button>
 			</div>
 			<br />
+			<Notification message={message} />
 			{addNewBlogsForm()}
 			{blogs.map((blog) => (
 				<div key={blog.id}>

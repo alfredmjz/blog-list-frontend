@@ -1,9 +1,9 @@
-import ErrorHandler from "./ErrorHandler";
+import Notification from "./Notification";
 import loginService from "../services/login";
 import blogService from "../services/blogs";
 
 const Login = (props) => {
-	const { username, setUsername, password, setPassword, setUser, errorMessage, setErrorMessage } = props;
+	const { username, setUsername, password, setPassword, setUser, message, setMessage } = props;
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
@@ -16,9 +16,10 @@ const Login = (props) => {
 			setUsername("");
 			setPassword("");
 		} catch (error) {
-			setErrorMessage("Username/Password is wrong");
+			const msg = [false, "Username/Password is wrong"];
+			setMessage(msg);
 			setTimeout(() => {
-				setErrorMessage(null);
+				setMessage([]);
 			}, 5000);
 		}
 	};
@@ -26,6 +27,7 @@ const Login = (props) => {
 	return (
 		<div>
 			<h1>Login</h1>
+			<Notification message={message} />
 			<form onSubmit={handleLogin}>
 				<label>Username:</label>
 				<input type='text' id='username' value={username} onChange={({ target }) => setUsername(target.value)} />
@@ -36,7 +38,6 @@ const Login = (props) => {
 				<br />
 				<button type='submit'>Login</button>
 			</form>
-			<ErrorHandler error={errorMessage} />
 		</div>
 	);
 };

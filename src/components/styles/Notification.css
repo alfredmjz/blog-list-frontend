@@ -1,0 +1,19 @@
+#green {
+	border: 2px solid rgb(32, 141, 105);
+	color: rgb(32, 141, 105);
+	text-align: left;
+	width: 50%;
+	margin: auto 0 10px;
+}
+
+#red {
+	border: 2px solid rgb(196, 79, 79);
+	color: rgb(196, 79, 79);
+	text-align: left;
+	width: 50%;
+	margin: auto 0 10px;
+}
+
+#notification-text {
+	margin-left: 1em;
+}
