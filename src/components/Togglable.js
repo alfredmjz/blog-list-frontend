@@ -17,7 +17,7 @@ const Togglable = forwardRef((props, refs) => {
 	});
 
 	return (
-		<section style={{ position: "relative", "margin-bottom": "10px" }}>
+		<section style={{ position: "relative", marginBottom: "10px" }}>
 			<div style={hideWhenVisible}>
 				<button onClick={toggleVisibility}>{props.buttonLabel}</button>
 			</div>

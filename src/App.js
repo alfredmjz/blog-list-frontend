@@ -4,6 +4,7 @@ import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
+import Blog from "./components/Blog";
 
 import loginService from "./services/login";
 import blogService from "./services/blogs";
@@ -15,7 +16,12 @@ const App = () => {
 	const [message, setMessage] = useState([]);
 
 	useEffect(() => {
-		blogService.getAll().then((blogs) => setBlogs(blogs));
+		async function fetchData() {
+			const allBlogs = await blogService.getAll();
+			const sortedBlogs = allBlogs.sort((a, b) => b.likes - a.likes);
+			setBlogs(sortedBlogs);
+		}
+		fetchData();
 	}, []);
 
 	useEffect(() => {
@@ -47,6 +53,24 @@ const App = () => {
 		}
 	};
 
+	const updateLikes = async (blogObject) => {
+		try {
+			const returnedBlog = await blogService.update(blogObject);
+
+			const updatedBlogs = blogs
+				.map((blog) => {
+					if (blog.title === returnedBlog.title) {
+						blog.likes = returnedBlog.likes;
+					}
+					return blog;
+				})
+				.sort((a, b) => b.likes - a.likes);
+			setBlogs(updatedBlogs);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const displayBlogs = () => {
 		return (
 			<div>
@@ -70,12 +94,8 @@ const App = () => {
 				<Togglable buttonLabel='Add new blog' ref={blogFormRef}>
 					<BlogForm createBlog={addNewBlog} />
 				</Togglable>
-				<section>
-					{blogs.map((blog) => (
-						<div key={blog.id}>
-							{blog.title} {blog.author}
-						</div>
-					))}
+				<section style={{ width: "50%" }}>
+					<Blog blogs={blogs} user={user.name} updateLikes={updateLikes} />
 				</section>
 			</div>
 		);
