@@ -17,9 +17,13 @@ const App = () => {
 
 	useEffect(() => {
 		async function fetchData() {
-			const allBlogs = await blogService.getAll();
-			const sortedBlogs = allBlogs.sort((a, b) => b.likes - a.likes);
-			setBlogs(sortedBlogs);
+			try {
+				const allBlogs = await blogService.getAll();
+				const sortedBlogs = allBlogs.sort((a, b) => b.likes - a.likes);
+				setBlogs(sortedBlogs);
+			} catch (error) {
+				console.error(error);
+			}
 		}
 		fetchData();
 	}, []);
@@ -56,7 +60,6 @@ const App = () => {
 	const updateLikes = async (blogObject) => {
 		try {
 			const returnedBlog = await blogService.update(blogObject);
-
 			const updatedBlogs = blogs
 				.map((blog) => {
 					if (blog.title === returnedBlog.title) {
@@ -66,6 +69,17 @@ const App = () => {
 				})
 				.sort((a, b) => b.likes - a.likes);
 			setBlogs(updatedBlogs);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const removeBlog = async (blogObject) => {
+		try {
+			await blogService.remove(blogObject);
+			const updatedBlogs = await blogService.getAll();
+			const sortedBlogs = updatedBlogs.sort((a, b) => b.likes - a.likes);
+			setBlogs(sortedBlogs);
 		} catch (error) {
 			console.error(error);
 		}
@@ -95,7 +109,7 @@ const App = () => {
 					<BlogForm createBlog={addNewBlog} />
 				</Togglable>
 				<section style={{ width: "50%" }}>
-					<Blog blogs={blogs} user={user.name} updateLikes={updateLikes} />
+					<Blog blogs={blogs} user={user.name} updateLikes={updateLikes} removeBlog={removeBlog} />
 				</section>
 			</div>
 		);

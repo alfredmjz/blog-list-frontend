@@ -1,6 +1,6 @@
 import { useState } from "react";
-const Blog = ({ blogs, user, updateLikes }) => {
-	const [click, setClick] = useState(true);
+const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
+	const [click, setClick] = useState(false);
 
 	const blogStyle = {
 		paddingTop: 10,
@@ -15,8 +15,6 @@ const Blog = ({ blogs, user, updateLikes }) => {
 		marginLeft: "5px",
 	};
 
-	const invertVisibility = { display: click ? "none" : "" };
-
 	const toggleClick = () => {
 		setClick(!click);
 	};
@@ -24,12 +22,21 @@ const Blog = ({ blogs, user, updateLikes }) => {
 	const handleView = (event) => {
 		toggleClick();
 		const target = event.target;
-		target.innerHTML = click ? "Hide" : "View";
+		target.nextElementSibling.style.display = click ? "none" : "";
+		target.innerHTML = click ? "View" : "Hide";
 	};
 
 	const handleLikes = (blog) => {
 		updateLikes({ ...blog, likes: blog.likes + 1 });
 	};
+
+	const handleDeletion = (blog) => {
+		toggleClick();
+		if (window.confirm(`Remove "${blog.title}" by ${blog.author}`)) {
+			removeBlog({ ...blog });
+		}
+	};
+
 	return (
 		<>
 			{blogs.map((blog) => (
@@ -38,7 +45,7 @@ const Blog = ({ blogs, user, updateLikes }) => {
 					<button onClick={handleView} style={buttonStyle}>
 						View
 					</button>
-					<div style={invertVisibility}>
+					<div style={{ display: "none" }}>
 						<p>{blog.author}</p>
 						<p>
 							{blog.likes}
@@ -47,6 +54,7 @@ const Blog = ({ blogs, user, updateLikes }) => {
 							</button>
 						</p>
 						<p>{user}</p>
+						<button onClick={() => handleDeletion(blog)}>Delete</button>
 					</div>
 				</div>
 			))}

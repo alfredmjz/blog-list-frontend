@@ -24,11 +24,21 @@ const update = async (newObject) => {
 	const config = {
 		headers: { Authorization: token },
 	};
-	console.log(newObject);
 	const newUrl = baseUrl + "/" + newObject.user.id;
 	const response = await axios.put(newUrl, newObject, config);
 	return response.data;
 };
 
-const toExport = { getAll, create, update, setToken };
+const remove = async (newObject) => {
+	try {
+		const config = { Authorization: token, "Content-Type": "application/json" };
+		const newUrl = baseUrl + "/" + newObject.id;
+		const response = await axios.delete(newUrl, { headers: config, data: newObject });
+		return response.status;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+const toExport = { getAll, create, update, remove, setToken };
 export default toExport;
