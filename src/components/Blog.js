@@ -38,15 +38,16 @@ const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
 	};
 
 	return (
-		<>
+		<div>
 			{blogs.map((blog) => (
 				<div key={blog.id} style={blogStyle}>
-					<span>{blog.title}</span>
-					<button onClick={handleView} style={buttonStyle}>
+					<span className='blog-title'>{blog.title}</span>
+					<button className='clicked' onClick={handleView} style={buttonStyle}>
 						View
 					</button>
 					<div style={{ display: "none" }}>
-						<p>{blog.author}</p>
+						<p className='blog-author'>{blog.author}</p>
+						<p>{blog.url}</p>
 						<p>
 							{blog.likes}
 							<button onClick={() => handleLikes(blog)} style={buttonStyle}>
@@ -58,7 +59,7 @@ const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
 					</div>
 				</div>
 			))}
-		</>
+		</div>
 	);
 };
 
