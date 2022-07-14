@@ -22,7 +22,9 @@ const LoginForm = ({ userLogin }) => {
 				<label>Password: </label>
 				<input type='text' id='password' value={password} onChange={({ target }) => setPassword(target.value)} />
 				<br />
-				<button type='submit'>Login</button>
+				<button type='submit' id='login-button'>
+					Login
+				</button>
 			</form>
 		</>
 	);
