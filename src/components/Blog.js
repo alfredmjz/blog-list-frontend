@@ -38,7 +38,7 @@ const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
 	};
 
 	return (
-		<div>
+		<div id='list-of-blogs'>
 			{blogs.map((blog) => (
 				<div key={blog.id} style={blogStyle}>
 					<span className='blog-title'>{blog.title}</span>
@@ -48,7 +48,7 @@ const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
 					<div style={{ display: "none" }}>
 						<p className='blog-author'>{blog.author}</p>
 						<p>{blog.url}</p>
-						<p>
+						<p id='likes'>
 							{blog.likes}
 							<button onClick={() => handleLikes(blog)} style={buttonStyle}>
 								Like
