@@ -1,7 +1,4 @@
-import { useState } from "react";
 const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
-	const [click, setClick] = useState(false);
-
 	const blogStyle = {
 		paddingTop: 10,
 		paddingLeft: 2,
@@ -15,15 +12,16 @@ const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
 		marginLeft: "5px",
 	};
 
-	const toggleClick = () => {
-		setClick(!click);
-	};
-
 	const handleView = (event) => {
-		toggleClick();
 		const target = event.target;
-		target.nextElementSibling.style.display = click ? "none" : "";
-		target.innerHTML = click ? "View" : "Hide";
+
+		if (target.nextElementSibling.style.display === "none") {
+			target.nextElementSibling.style.display = "";
+			target.innerHTML = "Hide";
+		} else {
+			target.nextElementSibling.style.display = "none";
+			target.innerHTML = "View";
+		}
 	};
 
 	const handleLikes = (blog) => {
@@ -31,7 +29,6 @@ const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
 	};
 
 	const handleDeletion = (blog) => {
-		toggleClick();
 		if (window.confirm(`Remove "${blog.title}" by ${blog.author}`)) {
 			removeBlog({ ...blog });
 		}

@@ -6,6 +6,7 @@ describe("Blog app", function () {
 			username: "mluukkai",
 			password: "salainen",
 		};
+
 		cy.request("POST", "http://localhost:3003/api/users/", user);
 		cy.visit("http://localhost:3000");
 	});
@@ -70,6 +71,7 @@ describe("Blog app", function () {
 					author: "Cypress Inc",
 					url: "www.definitelyfake.com",
 				});
+				cy.visit("http://localhost:3000");
 			});
 
 			it("User can like a blog", function () {
@@ -78,6 +80,31 @@ describe("Blog app", function () {
 				cy.get("@theTarget").children("div").children("#likes").as("likeDOM");
 				cy.get("@likeDOM").find("button").click();
 				cy.get("@likeDOM").contains(1);
+			});
+
+			it("Same user can delete his own blog posts", function () {
+				cy.contains("Second Test").parent().as("theTarget");
+				cy.get("@theTarget").children(".clicked").click();
+				cy.get("@theTarget").children("div").children("button").contains("Delete").click().should("not.exist");
+			});
+
+			it.only("Blog posts are sorted by number of likes", function () {
+				cy.contains("Second Test").parent().as("mostLikes");
+				cy.get("@mostLikes").children(".clicked").click();
+				cy.get("@mostLikes").children("div").children("#likes").as("likeDOM");
+				for (let n = 0; n < 5; n++) {
+					cy.get("@likeDOM").find("button").click();
+					cy.wait(500);
+				}
+
+				cy.contains("Third Test").parent().as("secondMostLikes");
+				cy.get("@secondMostLikes").children(".clicked").click();
+				cy.get("@secondMostLikes").children("div").children("#likes").as("secondLikeDOM");
+				cy.get("@secondLikeDOM").find("button").click();
+				cy.wait(500);
+
+				cy.get("#list-of-blogs>div").eq(0).should("contain", "Second Test");
+				cy.get("#list-of-blogs>div").eq(1).should("contain", "Third Test");
 			});
 		});
 	});
