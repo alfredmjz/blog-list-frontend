@@ -29,14 +29,15 @@ const update = async (newObject) => {
 	return response.data;
 };
 
-const remove = async (newObject) => {
+const remove = async (newObject, userObject) => {
 	try {
 		const config = { Authorization: token, "Content-Type": "application/json" };
 		const newUrl = baseUrl + "/" + newObject.id;
-		const response = await axios.delete(newUrl, { headers: config, data: newObject });
-		return response.status;
+		const response = await axios.delete(newUrl, { headers: config, data: userObject });
+		return response;
 	} catch (error) {
 		console.error(error);
+		return 401;
 	}
 };
 

@@ -1,4 +1,4 @@
-const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
+const Blog = ({ blogs, users, updateLikes, removeBlog }) => {
 	const blogStyle = {
 		paddingTop: 10,
 		paddingLeft: 2,
@@ -34,6 +34,11 @@ const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
 		}
 	};
 
+	const getBlogOwner = (id) => {
+		const owner = users.find((user) => user.id === id);
+		return owner.name;
+	};
+
 	return (
 		<div id='list-of-blogs'>
 			{blogs.map((blog) => (
@@ -51,7 +56,7 @@ const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
 								Like
 							</button>
 						</p>
-						<p>{user}</p>
+						<p>{getBlogOwner(blog.user)}</p>
 						<button onClick={() => handleDeletion(blog)}>Delete</button>
 					</div>
 				</div>

@@ -8,10 +8,12 @@ import Blog from "./components/Blog";
 
 import loginService from "./services/login";
 import blogService from "./services/blogs";
+import userService from "./services/user";
 
 const App = () => {
 	const [blogs, setBlogs] = useState([]);
-	const [user, setUser] = useState(null);
+	const [users, setUsers] = useState([]);
+	const [loginUser, setLoginUser] = useState(null);
 
 	const [message, setMessage] = useState([]);
 
@@ -19,8 +21,10 @@ const App = () => {
 		async function fetchData() {
 			try {
 				const allBlogs = await blogService.getAll();
+				const allUser = await userService.getUsers();
 				const sortedBlogs = allBlogs.sort((a, b) => b.likes - a.likes);
 				setBlogs(sortedBlogs);
+				setUsers(allUser);
 			} catch (error) {
 				console.error(error);
 			}
@@ -32,7 +36,7 @@ const App = () => {
 		const loggedUserJSON = window.localStorage.getItem("loggedUser");
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
-			setUser(user);
+			setLoginUser(user);
 			blogService.setToken(user.token);
 		}
 	}, []);
@@ -76,7 +80,16 @@ const App = () => {
 
 	const removeBlog = async (blogObject) => {
 		try {
-			await blogService.remove(blogObject);
+			const userObject = await users.find((user) => user.username === loginUser.username);
+			const status = await blogService.remove(blogObject, userObject);
+			if (status === 401) {
+				const msg = [false, "Only blog owner may delete this post"];
+				setMessage(msg);
+				<Notification message={message} />;
+				setTimeout(() => {
+					setMessage([]);
+				}, 5000);
+			}
 			const updatedBlogs = await blogService.getAll();
 			const sortedBlogs = updatedBlogs.sort((a, b) => b.likes - a.likes);
 			setBlogs(sortedBlogs);
@@ -92,12 +105,12 @@ const App = () => {
 				<br />
 				<div>
 					<p>
-						<b>{user.name}</b> logged in
+						<b>{loginUser.name}</b> logged in
 					</p>
 					<button
 						onClick={() => {
 							window.localStorage.clear();
-							setUser(null);
+							setLoginUser(null);
 						}}
 					>
 						Logout
@@ -109,7 +122,7 @@ const App = () => {
 					<BlogForm createBlog={addNewBlog} />
 				</Togglable>
 				<section style={{ width: "50%" }}>
-					<Blog blogs={blogs} user={user.name} updateLikes={updateLikes} removeBlog={removeBlog} />
+					<Blog blogs={blogs} users={users} updateLikes={updateLikes} removeBlog={removeBlog} />
 				</section>
 			</div>
 		);
@@ -120,7 +133,7 @@ const App = () => {
 			const inputUser = await loginService.login(userCredentials);
 			window.localStorage.setItem("loggedUser", JSON.stringify(inputUser));
 			blogService.setToken(inputUser.token);
-			setUser(inputUser);
+			setLoginUser(inputUser);
 		} catch (error) {
 			const msg = [false, "Username/Password is wrong"];
 			setMessage(msg);
@@ -144,8 +157,8 @@ const App = () => {
 
 	return (
 		<div>
-			{!user && verifyLogin()}
-			{user && displayBlogs()}
+			{!loginUser && verifyLogin()}
+			{loginUser && displayBlogs()}
 		</div>
 	);
 };
