@@ -34,6 +34,10 @@ Cypress.Commands.add("login", ({ username, password }) => {
 	});
 });
 
+Cypress.Commands.add("user", ({ username, name, password }) => {
+	cy.request("POST", "http://localhost:3003/api/users", { username, name, password });
+});
+
 Cypress.Commands.add("createBlog", ({ title, author, url }) => {
 	cy.request({
 		url: "http://localhost:3003/api/blogs",
