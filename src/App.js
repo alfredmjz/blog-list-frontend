@@ -33,6 +33,19 @@ const App = () => {
 	}, []);
 
 	useEffect(() => {
+		const hours = 1; // to clear the localStorage after 1 hour
+		// (if someone want to clear after 8hrs simply change hours=8)
+		const now = new Date().getTime();
+		const setupTime = window.localStorage.getItem("setupTime");
+		if (!setupTime) {
+			window.localStorage.setItem("setupTime", now);
+		} else {
+			if (now - setupTime > hours * 60 * 60 * 1000) {
+				window.localStorage.clear();
+				window.localStorage.setItem("setupTime", now);
+			}
+		}
+
 		const loggedUserJSON = window.localStorage.getItem("loggedUser");
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
