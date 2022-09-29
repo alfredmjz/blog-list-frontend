@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Route, Routes, Link, useNavigate } from "react-router-dom";
+
 import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
@@ -11,7 +13,7 @@ import loginService from "./services/login";
 import blogService from "./services/blogs";
 
 import { setNotification } from "./reducers/notificationReducer";
-import { initializeBlogs, createBlog, updateBlog } from "./reducers/blogReducer";
+import { initializeBlogs, createBlog } from "./reducers/blogReducer";
 import { initializeUsers, logoutUser } from "./reducers/userReducer";
 import Summary from "./components/Summary";
 
@@ -63,26 +65,18 @@ const App = () => {
 		}
 	};
 
-	const updateLikes = async (blogObject) => {
-		try {
-			dispatch(updateBlog(blogObject));
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
-	const removeBlog = async (blogObject) => {
-		if (status === 401) {
-			const msg = "Only blog owner may delete this post";
-			dispatch(setNotification(msg, 5, false));
-			<Notification />;
-		}
-	};
-
 	const displayBlogs = () => {
 		return (
 			<div>
 				<h2>blogs</h2>
+				<Link
+					to={{
+						pathname: "/users",
+						state: users,
+					}}
+				>
+					User
+				</Link>
 				<br />
 				<div>
 					<p>
@@ -101,7 +95,6 @@ const App = () => {
 				<Notification />
 				<div>
 					<h2>Users</h2>
-					<Summary users={users.users} />
 				</div>
 				<Togglable buttonLabel="Add new blog" ref={blogFormRef}>
 					<BlogForm createBlog={addNewBlog} />
@@ -137,10 +130,16 @@ const App = () => {
 		);
 	};
 
+	const HomeView = () => {
+		return (!users.loginUser && verifyLogin()) || (users.loginUser && displayBlogs());
+	};
+
 	return (
 		<div>
-			{!users.loginUser && verifyLogin()}
-			{users.loginUser && displayBlogs()}
+			<Routes>
+				<Route path="/" element={<HomeView />}></Route>
+				<Route path="/users" element={<Summary users={users} />}></Route>
+			</Routes>
 		</div>
 	);
 };

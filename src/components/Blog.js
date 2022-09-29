@@ -1,5 +1,7 @@
 import { useDispatch } from "react-redux";
 import { updateBlog, removeBlog } from "../reducers/blogReducer";
+import { setNotification } from "../reducers/notificationReducer";
+import Notification from "./Notification";
 
 const Blog = ({ blogs, users }) => {
 	const dispatch = useDispatch();
@@ -36,6 +38,11 @@ const Blog = ({ blogs, users }) => {
 	const handleDeletion = (blog) => {
 		if (window.confirm(`Remove "${blog.title}" by ${blog.author}`)) {
 			dispatch(removeBlog(blog, users));
+			if (blog.status && blog.status === 401) {
+				const msg = "Only blog owner may delete this post";
+				dispatch(setNotification(msg, 5, false));
+				<Notification />;
+			}
 		}
 	};
 

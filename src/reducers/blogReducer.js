@@ -50,10 +50,11 @@ export const updateBlog = (updatedObj) => {
 export const removeBlog = (blogObj, users) => {
 	return async (dispatch) => {
 		const userObj = users.users.find((user) => user.username === users.loginUser.username);
-		await blogService.remove(blogObj, userObj);
+		const status = await blogService.remove(blogObj, userObj);
 		const blogs = await blogService.getAll();
 		const sorted = blogs.sort((a, b) => b.likes - a.likes);
-		dispatch(setBlog(sorted));
+		const payload = { status, sorted };
+		dispatch(setBlog(payload));
 	};
 };
 
