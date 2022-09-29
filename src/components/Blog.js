@@ -40,7 +40,7 @@ const Blog = ({ blogs, users }) => {
 	};
 
 	const getBlogOwner = (id) => {
-		const owner = users.find((user) => user.id === id);
+		const owner = users.users.find((user) => user.id === id);
 		return owner.name;
 	};
 

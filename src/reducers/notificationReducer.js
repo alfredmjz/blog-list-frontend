@@ -11,7 +11,7 @@ const notificationSlice = createSlice({
 			if (state.timer !== null) {
 				clearTimeout(state.timer);
 			}
-			return { timer: action.payload.timer, message: action.payload.message, error: action.payload.error };
+			return { ...action.payload };
 		},
 		clear(state, action) {
 			clearTimeout(action.payload);

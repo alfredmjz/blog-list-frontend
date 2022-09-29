@@ -42,14 +42,14 @@ export const createBlog = (content) => {
 
 export const updateBlog = (updatedObj) => {
 	return async (dispatch) => {
-		const response = await blogService.update({ ...updatedObj, votes: updatedObj.votes + 1 });
+		const response = await blogService.update({ ...updatedObj, likes: updatedObj.likes + 1 });
 		dispatch(updateLikes(response));
 	};
 };
 
-export const removeBlog = (blogObj, users, loginUser) => {
+export const removeBlog = (blogObj, users) => {
 	return async (dispatch) => {
-		const userObj = users.find((user) => user.username === loginUser.username);
+		const userObj = users.users.find((user) => user.username === users.loginUser.username);
 		await blogService.remove(blogObj, userObj);
 		const blogs = await blogService.getAll();
 		const sorted = blogs.sort((a, b) => b.likes - a.likes);

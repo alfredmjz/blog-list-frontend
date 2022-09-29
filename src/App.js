@@ -12,7 +12,7 @@ import blogService from "./services/blogs";
 
 import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog, updateBlog } from "./reducers/blogReducer";
-import { initializeUsers } from "./reducers/userReducer";
+import { initializeUsers, logoutUser } from "./reducers/userReducer";
 
 const App = () => {
 	const blogs = useSelector((state) => {
@@ -22,13 +22,10 @@ const App = () => {
 	const users = useSelector((state) => {
 		return state.users;
 	});
-	const [loginUser, setLoginUser] = useState(null);
 
 	const dispatch = useDispatch();
-
 	useEffect(() => {
 		dispatch(initializeBlogs());
-		dispatch(initializeUsers());
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -39,7 +36,7 @@ const App = () => {
 		if (!setupTime) {
 			window.localStorage.setItem("setupTime", now);
 		} else {
-			if (!loginUser || now - setupTime > hours * 60 * 60 * 1000) {
+			if (!users.loginUser || now - setupTime > hours * 60 * 60 * 1000) {
 				window.localStorage.clear();
 				window.localStorage.setItem("setupTime", now);
 			}
@@ -48,7 +45,6 @@ const App = () => {
 		const loggedUserJSON = window.localStorage.getItem("loggedUser");
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
-			setLoginUser(user);
 			blogService.setToken(user.token);
 		}
 	}, []);
@@ -89,12 +85,12 @@ const App = () => {
 				<br />
 				<div>
 					<p>
-						<b>{loginUser.name}</b> logged in
+						<b>{users.loginUser.name}</b> logged in
 					</p>
 					<button
 						onClick={() => {
 							window.localStorage.clear();
-							setLoginUser(null);
+							dispatch(logoutUser());
 						}}
 					>
 						Logout
@@ -117,7 +113,7 @@ const App = () => {
 			const inputUser = await loginService.login(userCredentials);
 			window.localStorage.setItem("loggedUser", JSON.stringify(inputUser));
 			blogService.setToken(inputUser.token);
-			setLoginUser(inputUser);
+			dispatch(initializeUsers(inputUser));
 		} catch (error) {
 			const msg = "Username/Password is wrong";
 			dispatch(setNotification(msg, 5, false));
@@ -138,8 +134,8 @@ const App = () => {
 
 	return (
 		<div>
-			{!loginUser && verifyLogin()}
-			{loginUser && displayBlogs()}
+			{!users.loginUser && verifyLogin()}
+			{users.loginUser && displayBlogs()}
 		</div>
 	);
 };
