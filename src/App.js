@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-
+import { useDispatch } from "react-redux";
 import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
@@ -10,12 +10,14 @@ import loginService from "./services/login";
 import blogService from "./services/blogs";
 import userService from "./services/user";
 
+import { setNotification } from "./reducers/notificationReducer";
+
 const App = () => {
 	const [blogs, setBlogs] = useState([]);
 	const [users, setUsers] = useState([]);
 	const [loginUser, setLoginUser] = useState(null);
 
-	const [message, setMessage] = useState([]);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		async function fetchData() {
@@ -59,18 +61,12 @@ const App = () => {
 		try {
 			blogFormRef.current.toggleVisibility();
 			const returnedBlog = await blogService.create(blogObject);
-			const msg = [true, `"${blogObject.title}" by ${blogObject.author} has been added!`];
+			const msg = `"${blogObject.title}" by ${blogObject.author} has been added!`;
 			setBlogs(blogs.concat(returnedBlog));
-			setMessage(msg);
-			setTimeout(() => {
-				setMessage([]);
-			}, 5000);
+			dispatch(setNotification(msg, 5, true));
 		} catch (error) {
-			const msg = [false, `${blogObject.title} not added. Try again later`];
-			setMessage(msg);
-			setTimeout(() => {
-				setMessage([]);
-			}, 5000);
+			const msg = `${blogObject.title} not added. Try again later`;
+			dispatch(setNotification(msg, 5, false));
 		}
 	};
 
@@ -96,12 +92,9 @@ const App = () => {
 			const userObject = await users.find((user) => user.username === loginUser.username);
 			const status = await blogService.remove(blogObject, userObject);
 			if (status === 401) {
-				const msg = [false, "Only blog owner may delete this post"];
-				setMessage(msg);
-				<Notification message={message} />;
-				setTimeout(() => {
-					setMessage([]);
-				}, 5000);
+				const msg = "Only blog owner may delete this post";
+				dispatch(setNotification(msg, 5, false));
+				<Notification />;
 			}
 			const updatedBlogs = await blogService.getAll();
 			const sortedBlogs = updatedBlogs.sort((a, b) => b.likes - a.likes);
@@ -130,8 +123,8 @@ const App = () => {
 					</button>
 				</div>
 				<br />
-				<Notification message={message} />
-				<Togglable buttonLabel='Add new blog' ref={blogFormRef}>
+				<Notification />
+				<Togglable buttonLabel="Add new blog" ref={blogFormRef}>
 					<BlogForm createBlog={addNewBlog} />
 				</Togglable>
 				<section style={{ width: "50%" }}>
@@ -148,11 +141,8 @@ const App = () => {
 			blogService.setToken(inputUser.token);
 			setLoginUser(inputUser);
 		} catch (error) {
-			const msg = [false, "Username/Password is wrong"];
-			setMessage(msg);
-			setTimeout(() => {
-				setMessage([]);
-			}, 5000);
+			const msg = "Username/Password is wrong";
+			dispatch(setNotification(msg, 5, false));
 		}
 	};
 
@@ -160,8 +150,8 @@ const App = () => {
 		return (
 			<div>
 				<h1>Login</h1>
-				<Notification message={message} />
-				<Togglable buttonLabel='Login'>
+				<Notification />
+				<Togglable buttonLabel="Login">
 					<LoginForm userLogin={userLogin} />
 				</Togglable>
 			</div>

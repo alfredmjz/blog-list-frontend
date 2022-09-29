@@ -40,17 +40,17 @@ const Blog = ({ blogs, users, updateLikes, removeBlog }) => {
 	};
 
 	return (
-		<div id='list-of-blogs'>
+		<div id="list-of-blogs">
 			{blogs.map((blog) => (
 				<div key={blog.id} style={blogStyle}>
-					<span className='blog-title'>{blog.title}</span>
-					<button className='clicked' onClick={handleView} style={buttonStyle}>
+					<span className="blog-title">{blog.title}</span>
+					<button className="clicked" onClick={handleView} style={buttonStyle}>
 						View
 					</button>
 					<div style={{ display: "none" }}>
-						<p className='blog-author'>{blog.author}</p>
+						<p className="blog-author">{blog.author}</p>
 						<p>{blog.url}</p>
-						<p id='likes'>
+						<p id="likes">
 							{blog.likes}
 							<button onClick={() => handleLikes(blog)} style={buttonStyle}>
 								Like
