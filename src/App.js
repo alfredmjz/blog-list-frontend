@@ -13,6 +13,7 @@ import blogService from "./services/blogs";
 import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog, updateBlog } from "./reducers/blogReducer";
 import { initializeUsers, logoutUser } from "./reducers/userReducer";
+import Summary from "./components/Summary";
 
 const App = () => {
 	const blogs = useSelector((state) => {
@@ -98,6 +99,10 @@ const App = () => {
 				</div>
 				<br />
 				<Notification />
+				<div>
+					<h2>Users</h2>
+					<Summary users={users.users} />
+				</div>
 				<Togglable buttonLabel="Add new blog" ref={blogFormRef}>
 					<BlogForm createBlog={addNewBlog} />
 				</Togglable>
