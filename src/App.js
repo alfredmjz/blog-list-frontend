@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
@@ -8,31 +9,27 @@ import Blog from "./components/Blog";
 
 import loginService from "./services/login";
 import blogService from "./services/blogs";
-import userService from "./services/user";
 
 import { setNotification } from "./reducers/notificationReducer";
+import { initializeBlogs, createBlog, updateBlog } from "./reducers/blogReducer";
+import { initializeUsers } from "./reducers/userReducer";
 
 const App = () => {
-	const [blogs, setBlogs] = useState([]);
-	const [users, setUsers] = useState([]);
+	const blogs = useSelector((state) => {
+		return state.blogs;
+	});
+
+	const users = useSelector((state) => {
+		return state.users;
+	});
 	const [loginUser, setLoginUser] = useState(null);
 
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		async function fetchData() {
-			try {
-				const allBlogs = await blogService.getAll();
-				const allUser = await userService.getUsers();
-				const sortedBlogs = allBlogs.sort((a, b) => b.likes - a.likes);
-				setBlogs(sortedBlogs);
-				setUsers(allUser);
-			} catch (error) {
-				console.error(error);
-			}
-		}
-		fetchData();
-	}, []);
+		dispatch(initializeBlogs());
+		dispatch(initializeUsers());
+	}, [dispatch]);
 
 	useEffect(() => {
 		const hours = 1; // to clear the localStorage after 1 hour
@@ -42,7 +39,7 @@ const App = () => {
 		if (!setupTime) {
 			window.localStorage.setItem("setupTime", now);
 		} else {
-			if (now - setupTime > hours * 60 * 60 * 1000) {
+			if (!loginUser || now - setupTime > hours * 60 * 60 * 1000) {
 				window.localStorage.clear();
 				window.localStorage.setItem("setupTime", now);
 			}
@@ -60,9 +57,8 @@ const App = () => {
 	const addNewBlog = async (blogObject) => {
 		try {
 			blogFormRef.current.toggleVisibility();
-			const returnedBlog = await blogService.create(blogObject);
 			const msg = `"${blogObject.title}" by ${blogObject.author} has been added!`;
-			setBlogs(blogs.concat(returnedBlog));
+			dispatch(createBlog(blogObject));
 			dispatch(setNotification(msg, 5, true));
 		} catch (error) {
 			const msg = `${blogObject.title} not added. Try again later`;
@@ -72,35 +68,17 @@ const App = () => {
 
 	const updateLikes = async (blogObject) => {
 		try {
-			const returnedBlog = await blogService.update(blogObject);
-			const updatedBlogs = blogs
-				.map((blog) => {
-					if (blog.title === returnedBlog.title) {
-						blog.likes = returnedBlog.likes;
-					}
-					return blog;
-				})
-				.sort((a, b) => b.likes - a.likes);
-			setBlogs(updatedBlogs);
+			dispatch(updateBlog(blogObject));
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
 	const removeBlog = async (blogObject) => {
-		try {
-			const userObject = await users.find((user) => user.username === loginUser.username);
-			const status = await blogService.remove(blogObject, userObject);
-			if (status === 401) {
-				const msg = "Only blog owner may delete this post";
-				dispatch(setNotification(msg, 5, false));
-				<Notification />;
-			}
-			const updatedBlogs = await blogService.getAll();
-			const sortedBlogs = updatedBlogs.sort((a, b) => b.likes - a.likes);
-			setBlogs(sortedBlogs);
-		} catch (error) {
-			console.error(error);
+		if (status === 401) {
+			const msg = "Only blog owner may delete this post";
+			dispatch(setNotification(msg, 5, false));
+			<Notification />;
 		}
 	};
 
@@ -128,7 +106,7 @@ const App = () => {
 					<BlogForm createBlog={addNewBlog} />
 				</Togglable>
 				<section style={{ width: "50%" }}>
-					<Blog blogs={blogs} users={users} updateLikes={updateLikes} removeBlog={removeBlog} />
+					<Blog blogs={blogs} users={users} />
 				</section>
 			</div>
 		);

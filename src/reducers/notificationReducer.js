@@ -7,10 +7,11 @@ const notificationSlice = createSlice({
 	initialState,
 	reducers: {
 		add(state, action) {
+			console.log(state, action);
 			if (state.timer !== null) {
 				clearTimeout(state.timer);
 			}
-			return { timer: action.payload.timer, message: action.payload.message };
+			return { timer: action.payload.timer, message: action.payload.message, error: action.payload.error };
 		},
 		clear(state, action) {
 			clearTimeout(action.payload);

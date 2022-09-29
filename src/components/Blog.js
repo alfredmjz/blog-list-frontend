@@ -1,4 +1,9 @@
-const Blog = ({ blogs, users, updateLikes, removeBlog }) => {
+import { useDispatch } from "react-redux";
+import { updateBlog, removeBlog } from "../reducers/blogReducer";
+
+const Blog = ({ blogs, users }) => {
+	const dispatch = useDispatch();
+
 	const blogStyle = {
 		paddingTop: 10,
 		paddingLeft: 2,
@@ -25,12 +30,12 @@ const Blog = ({ blogs, users, updateLikes, removeBlog }) => {
 	};
 
 	const handleLikes = (blog) => {
-		updateLikes({ ...blog, likes: blog.likes + 1 });
+		dispatch(updateBlog(blog));
 	};
 
 	const handleDeletion = (blog) => {
 		if (window.confirm(`Remove "${blog.title}" by ${blog.author}`)) {
-			removeBlog({ ...blog });
+			dispatch(removeBlog(blog, users));
 		}
 	};
 
