@@ -1,3 +1,5 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
+/* eslint-disable indent */
 /* eslint-disable no-unused-vars */
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +18,7 @@ import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog } from "./reducers/blogReducer";
 import { initializeUsers, logoutUser } from "./reducers/userReducer";
 import Summary from "./components/Summary";
+import UserView from "./components/UserView";
 
 const App = () => {
 	const blogs = useSelector((state) => {
@@ -68,30 +71,6 @@ const App = () => {
 	const displayBlogs = () => {
 		return (
 			<div>
-				<h2>blogs</h2>
-				<Link
-					to={{
-						pathname: "/users",
-						state: users,
-					}}
-				>
-					User
-				</Link>
-				<br />
-				<div>
-					<p>
-						<b>{users.loginUser.name}</b> logged in
-					</p>
-					<button
-						onClick={() => {
-							window.localStorage.clear();
-							dispatch(logoutUser());
-						}}
-					>
-						Logout
-					</button>
-				</div>
-				<br />
 				<Notification />
 				<div>
 					<h2>Users</h2>
@@ -131,15 +110,45 @@ const App = () => {
 	};
 
 	const HomeView = () => {
-		return (!users.loginUser && verifyLogin()) || (users.loginUser && displayBlogs());
+		return users.loginUser && displayBlogs();
 	};
 
 	return (
 		<div>
-			<Routes>
-				<Route path="/" element={<HomeView />}></Route>
-				<Route path="/users" element={<Summary users={users} />}></Route>
-			</Routes>
+			{!users.loginUser && verifyLogin()}
+			{users.loginUser && (
+				<div>
+					<h2>blogs</h2>
+					<Link
+						to={{
+							pathname: "/users",
+							state: users,
+						}}
+					>
+						User
+					</Link>
+					<br />
+					<div>
+						<p>
+							<b>{users.loginUser.name}</b> logged in
+						</p>
+						<button
+							onClick={() => {
+								window.localStorage.clear();
+								dispatch(logoutUser());
+							}}
+						>
+							Logout
+						</button>
+					</div>
+					<br />
+					<Routes>
+						<Route path="/" element={<HomeView />}></Route>
+						<Route path="/users" element={<Summary users={users} />}></Route>
+						<Route path="/users/:id" element={<UserView usersList={users} blogsList={blogs} />}></Route>
+					</Routes>
+				</div>
+			)}
 		</div>
 	);
 };
