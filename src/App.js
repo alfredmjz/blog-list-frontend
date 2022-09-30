@@ -19,6 +19,7 @@ import { initializeBlogs, createBlog } from "./reducers/blogReducer";
 import { initializeUsers, logoutUser } from "./reducers/userReducer";
 import Summary from "./components/Summary";
 import UserView from "./components/UserView";
+import BlogView from "./components/BlogView";
 
 const App = () => {
 	const blogs = useSelector((state) => {
@@ -112,7 +113,7 @@ const App = () => {
 	const HomeView = () => {
 		return users.loginUser && displayBlogs();
 	};
-
+	console.log(blogs);
 	return (
 		<div>
 			{!users.loginUser && verifyLogin()}
@@ -146,6 +147,7 @@ const App = () => {
 						<Route path="/" element={<HomeView />}></Route>
 						<Route path="/users" element={<Summary users={users} />}></Route>
 						<Route path="/users/:id" element={<UserView usersList={users} blogsList={blogs} />}></Route>
+						<Route path="/blogs/:id" element={<BlogView usersList={users} blogsList={blogs} />}></Route>
 					</Routes>
 				</div>
 			)}
