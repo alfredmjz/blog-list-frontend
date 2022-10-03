@@ -28,12 +28,14 @@ const blogView = ({ blogsList, usersList }) => {
 
 	const match = useMatch("/blogs/:id");
 	const blog = match ? blogsList.find((blog) => blog.id === match.params.id) : null;
+	console.log(match.params.id);
 
 	const handleLikes = (blog) => {
 		dispatch(updateBlog(blog));
 	};
 	const getBlogOwner = (id) => {
 		const owner = usersList.users.find((user) => user.id === id);
+		console.log(blog, blog.user, usersList);
 		return owner.name;
 	};
 
@@ -60,6 +62,14 @@ const blogView = ({ blogsList, usersList }) => {
 					</button>
 				</p>
 				<p>Posted by {getBlogOwner(blog.user)}</p>
+				<div>
+					<h3>Comments</h3>
+					<ul>
+						{blog.comments.map((comment, index) => (
+							<li key={index}>{comment}</li>
+						))}
+					</ul>
+				</div>
 				<button style={{ width: "5%" }} onClick={() => handleDeletion(blog)}>
 					Delete
 				</button>

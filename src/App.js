@@ -81,7 +81,7 @@ const App = () => {
 					<BlogForm createBlog={addNewBlog} />
 				</Togglable>
 				<section style={{ width: "50%" }}>
-					<Blog blogs={blogs} users={users} />
+					<Blog blogs={blogs} />
 				</section>
 			</div>
 		);
