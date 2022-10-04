@@ -1,4 +1,5 @@
 import React from "react";
+import { Container, Stack } from "react-bootstrap";
 import { useMatch } from "react-router-dom";
 
 const UserView = ({ blogsList, usersList }) => {
@@ -9,19 +10,20 @@ const UserView = ({ blogsList, usersList }) => {
 	const match = useMatch("/users/:id");
 	const inViewUser = match ? usersList.users.find((user) => user.id === match.params.id) : null;
 
-	const container = {
-		display: "flex",
-		flexFlow: "column",
-	};
-
 	return (
-		<>
-			<div style={container}>
-				<h2>{inViewUser.name}</h2>
-				<h3>Added blogs</h3>
-				<ul>{blogsList.map((blog) => (blog.user === inViewUser.id ? <li key={blog.id}>{blog.title}</li> : null))}</ul>
-			</div>
-		</>
+		<Container className="mt-5">
+			<h1 className="mb-3">{inViewUser.name}</h1>
+			<h3 className="mb-3">Added blogs</h3>
+			<Stack gap={2}>
+				{blogsList.map((blog) =>
+					blog.user === inViewUser.id ? (
+						<div className="bg-light border ps-2" key={blog.id}>
+							{blog.title}
+						</div>
+					) : null
+				)}
+			</Stack>
+		</Container>
 	);
 };
 

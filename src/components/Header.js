@@ -19,17 +19,15 @@ const Header = ({ users }) => {
 				<Navbar.Toggle aria-controls="navbarScroll" />
 				<Navbar.Collapse id="navbarScroll">
 					<Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: "100px" }} navbarScroll>
-						<Nav.Link>
-							<Link
-								to={{
-									pathname: "/users",
-									state: users,
-								}}
-								style={{ all: "inherit" }}
-							>
-								Users
-							</Link>
-						</Nav.Link>
+						<Link
+							to={{
+								pathname: "/users",
+								state: users,
+							}}
+							style={{ color: "white", textDecoration: "none", cursor: "pointer" }}
+						>
+							Users
+						</Link>
 					</Nav>
 
 					<NavDropdown title={userTitle} id="navbarScrollingDropdown" style={{ color: "white" }}>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const Summary = ({ users }) => {
@@ -6,40 +7,35 @@ const Summary = ({ users }) => {
 		return null;
 	}
 
-	const container = {
-		display: "flex",
-		width: "300px",
-	};
-	const flexChild = { alignSelf: "flex-end", marginBottom: "10px" };
-	const floatRight = { marginLeft: "10px" };
-
 	return (
-		<>
-			<div style={container}>
-				<div style={flexChild}>
-					<h3>Users</h3>
-
-					{users.users.map((user) => {
-						return (
-							<p key={user.id}>
-								<Link to={`/users/${user.id}`}>{user.name}</Link>
-							</p>
-						);
-					})}
-				</div>
-
-				<div style={flexChild}>
-					<h3>Blogs created</h3>
-					{users.users.map((user) => {
-						return (
-							<p style={floatRight} key={user.id}>
-								{user.blogs.length}
-							</p>
-						);
-					})}
-				</div>
-			</div>
-		</>
+		<Container className="mt-5 text-left">
+			<Container>
+				<Row className="justify-content-md-center">
+					<Col xs lg="2">
+						<h3>Users</h3>
+					</Col>
+					<Col xs lg="2">
+						<h3>Blogs created</h3>
+					</Col>
+				</Row>
+				<Row className="justify-content-md-center">
+					<Col xs lg="2">
+						{users.users.map((user) => {
+							return (
+								<p key={user.id}>
+									<Link to={`/users/${user.id}`}>{user.name}</Link>
+								</p>
+							);
+						})}
+					</Col>
+					<Col xs lg="2">
+						{users.users.map((user) => {
+							return <p key={user.id}>{user.blogs.length}</p>;
+						})}
+					</Col>
+				</Row>
+			</Container>
+		</Container>
 	);
 };
 

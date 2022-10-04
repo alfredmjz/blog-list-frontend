@@ -7,7 +7,7 @@ const blogSlice = createSlice({
 	reducers: {
 		updateLikes(state, action) {
 			const id = action.payload.id;
-			state
+			state.data
 				.map((blog) => {
 					if (blog.id === id) {
 						blog.likes += 1;
@@ -17,10 +17,8 @@ const blogSlice = createSlice({
 				.sort((a, b) => b.likes - a.likes);
 		},
 		updateComments(state, action) {
-			console.log(action.payload);
 			const id = action.payload.id;
-			state.map((blog) => {
-				console.log(blog.id, id);
+			state.data.map((blog) => {
 				if (blog.id === id) {
 					blog.comments = action.payload.comments;
 				}
@@ -28,7 +26,7 @@ const blogSlice = createSlice({
 			});
 		},
 		appendBlog(state, action) {
-			state.push(action.payload);
+			state.data.push(action.payload);
 		},
 		setBlog(state, action) {
 			return action.payload;
@@ -38,9 +36,11 @@ const blogSlice = createSlice({
 
 export const initializeBlogs = () => {
 	return async (dispatch) => {
-		const blogs = await blogService.getAll();
-		const sorted = blogs.sort((a, b) => b.likes - a.likes);
-		dispatch(setBlog(sorted));
+		const response = await blogService.getAll();
+		const sorted = response.data.sort((a, b) => b.likes - a.likes);
+		const payload = { status: response.status, data: sorted };
+		console.log(payload);
+		dispatch(setBlog(payload));
 	};
 };
 
@@ -68,10 +68,10 @@ export const addCommentBlog = (updatedObj) => {
 export const removeBlog = (blogObj, users) => {
 	return async (dispatch) => {
 		const userObj = users.users.find((user) => user.username === users.loginUser.username);
-		const status = await blogService.remove(blogObj, userObj);
+		const response = await blogService.remove(blogObj, userObj);
 		const blogs = await blogService.getAll();
-		const sorted = blogs.sort((a, b) => b.likes - a.likes);
-		const payload = { status, sorted };
+		const sorted = blogs.data.sort((a, b) => b.likes - a.likes);
+		const payload = { status: response, data: sorted };
 		dispatch(setBlog(payload));
 	};
 };

@@ -22,6 +22,7 @@ import { Container } from "react-bootstrap";
 
 const App = () => {
 	const blogs = useSelector((state) => {
+		console.log(state);
 		return state.blogs;
 	});
 
@@ -67,19 +68,6 @@ const App = () => {
 		}
 	};
 
-	const displayBlogs = () => {
-		return (
-			<Container className="justify-content-center text-left mt-5">
-				<Notification />
-				<h1>Blog Application</h1>
-				<Togglable buttonLabel="Post a blog" ref={blogFormRef}>
-					<BlogForm createBlog={addNewBlog} />
-				</Togglable>
-				<Blog blogs={blogs} />
-			</Container>
-		);
-	};
-
 	const userLogin = async (userCredentials) => {
 		try {
 			const inputUser = await loginService.login(userCredentials);
@@ -90,6 +78,20 @@ const App = () => {
 			const msg = "Username/Password is wrong";
 			dispatch(setNotification(msg, 5, false));
 		}
+	};
+
+	const displayBlogs = () => {
+		console.log(blogs);
+		return (
+			<Container className="justify-content-center text-left mt-5">
+				<Notification />
+				<h1>Blog Application</h1>
+				<Togglable buttonLabel="Post a blog" ref={blogFormRef}>
+					<BlogForm createBlog={addNewBlog} />
+				</Togglable>
+				<Blog blogs={blogs.data} />
+			</Container>
+		);
 	};
 
 	const verifyLogin = () => {
@@ -117,8 +119,8 @@ const App = () => {
 					<Routes>
 						<Route path="/" element={<HomeView />}></Route>
 						<Route path="/users" element={<Summary users={users} />}></Route>
-						<Route path="/users/:id" element={<UserView usersList={users} blogsList={blogs} />}></Route>
-						<Route path="/blogs/:id" element={<BlogView usersList={users} blogsList={blogs} />}></Route>
+						<Route path="/users/:id" element={<UserView usersList={users} blogsList={blogs.data} />}></Route>
+						<Route path="/blogs/:id" element={<BlogView usersList={users} fullBlogsList={blogs} />}></Route>
 					</Routes>
 				</>
 			)}
