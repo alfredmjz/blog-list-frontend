@@ -1,56 +1,50 @@
 import React from "react";
+import { Container, Navbar, NavDropdown, Nav } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { logoutUser } from "../reducers/userReducer";
 
 const Header = ({ users }) => {
 	const dispatch = useDispatch();
-	const flexContainer = {
-		display: "flex",
-		width: "20%",
-		justifyContent: "space-between",
-	};
-
-	const header = {
-		width: "100%",
-		backgroundColor: "rgb(202, 202, 202)",
-	};
+	const userTitle = `Signed in as: ${users.loginUser.name}`;
 	return (
-		<div style={header}>
-			<div style={flexContainer}>
-				<div>
-					<Link
-						to={{
-							pathname: "/",
-						}}
-					>
-						Blogs
+		<Navbar variant="dark" bg="dark">
+			<Container fluid>
+				<Navbar.Brand>
+					<Link to="/" style={{ all: "inherit", cursor: "pointer" }}>
+						Blog Application
 					</Link>
-				</div>
+				</Navbar.Brand>
 
-				<div>
-					<Link
-						to={{
-							pathname: "/users",
-							state: users,
-						}}
-					>
-						User
-					</Link>
-				</div>
-				<div>
-					<b>{users.loginUser.name}</b> logged in
-					<button
-						onClick={() => {
-							window.localStorage.clear();
-							dispatch(logoutUser());
-						}}
-					>
-						Logout
-					</button>
-				</div>
-			</div>
-		</div>
+				<Navbar.Toggle aria-controls="navbarScroll" />
+				<Navbar.Collapse id="navbarScroll">
+					<Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: "100px" }} navbarScroll>
+						<Nav.Link>
+							<Link
+								to={{
+									pathname: "/users",
+									state: users,
+								}}
+								style={{ all: "inherit" }}
+							>
+								Users
+							</Link>
+						</Nav.Link>
+					</Nav>
+
+					<NavDropdown title={userTitle} id="navbarScrollingDropdown" style={{ color: "white" }}>
+						<NavDropdown.Item
+							onClick={() => {
+								window.localStorage.clear();
+								dispatch(logoutUser());
+							}}
+						>
+							Sign out
+						</NavDropdown.Item>
+					</NavDropdown>
+				</Navbar.Collapse>
+			</Container>
+		</Navbar>
 	);
 };
 

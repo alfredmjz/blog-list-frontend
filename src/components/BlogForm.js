@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Form, Button } from "react-bootstrap";
 
 const BlogForm = ({ createBlog }) => {
 	const [title, setTitle] = useState("");
@@ -19,44 +20,42 @@ const BlogForm = ({ createBlog }) => {
 	};
 
 	return (
-		<>
-			<h1>Create New</h1>
-			<form style={{ width: "20em" }} onSubmit={addBlog}>
-				<label>title</label>
-				<br />
-				<input
-					type='text'
-					placeholder='Title'
-					id='title'
+		<Form.Floating onSubmit={addBlog}>
+			<h2>Create New</h2>
+			<Form.Group className="mb-2">
+				<label htmlFor="title"></label>
+				<Form.Control
+					type="text"
+					id="title"
+					placeholder="Title"
 					value={title}
 					onChange={({ target }) => setTitle(target.value)}
-				></input>
-				<br />
-				<label>author</label>
-				<br />
-				<input
-					type='text'
-					placeholder='Author'
-					id='author'
+				/>
+			</Form.Group>
+			<Form.Group className="mb-2">
+				<label htmlFor="author"></label>
+				<Form.Control
+					type="text"
+					id="author"
+					placeholder="Author"
 					value={author}
 					onChange={({ target }) => setAuthor(target.value)}
-				></input>
-				<br />
-				<label>url</label>
-				<br />
-				<input
-					type='text'
-					placeholder='URL'
-					id='url'
+				/>
+			</Form.Group>
+			<Form.Group className="mb-2">
+				<label htmlFor="url"></label>
+				<Form.Control
+					type="text"
+					id="url"
+					placeholder="URL"
 					value={url}
 					onChange={({ target }) => setURL(target.value)}
-				></input>
-				<br />
-				<button id='submit-blog' type='submit'>
-					Add
-				</button>
-			</form>
-		</>
+				/>
+			</Form.Group>
+			<Button variant="primary" type="submit">
+				Add
+			</Button>
+		</Form.Floating>
 	);
 };
 

@@ -18,6 +18,7 @@ import Summary from "./components/Summary";
 import UserView from "./components/UserView";
 import BlogView from "./components/BlogView";
 import Header from "./components/Header";
+import { Container } from "react-bootstrap";
 
 const App = () => {
 	const blogs = useSelector((state) => {
@@ -68,18 +69,14 @@ const App = () => {
 
 	const displayBlogs = () => {
 		return (
-			<div>
+			<Container className="justify-content-center text-left mt-5">
 				<Notification />
-				<div>
-					<h2>Users</h2>
-				</div>
-				<Togglable buttonLabel="Add new blog" ref={blogFormRef}>
+				<h1>Blog Application</h1>
+				<Togglable buttonLabel="Post a blog" ref={blogFormRef}>
 					<BlogForm createBlog={addNewBlog} />
 				</Togglable>
-				<section style={{ width: "50%" }}>
-					<Blog blogs={blogs} />
-				</section>
-			</div>
+				<Blog blogs={blogs} />
+			</Container>
 		);
 	};
 
@@ -97,13 +94,13 @@ const App = () => {
 
 	const verifyLogin = () => {
 		return (
-			<div>
-				<h1>Login</h1>
+			<Container>
+				<h1>Log in to your account</h1>
 				<Notification />
 				<Togglable buttonLabel="Login">
 					<LoginForm userLogin={userLogin} />
 				</Togglable>
-			</div>
+			</Container>
 		);
 	};
 
@@ -112,10 +109,10 @@ const App = () => {
 	};
 
 	return (
-		<div>
+		<>
 			{!users.loginUser && verifyLogin()}
 			{users.loginUser && (
-				<div>
+				<>
 					<Header users={users} />
 					<Routes>
 						<Route path="/" element={<HomeView />}></Route>
@@ -123,9 +120,9 @@ const App = () => {
 						<Route path="/users/:id" element={<UserView usersList={users} blogsList={blogs} />}></Route>
 						<Route path="/blogs/:id" element={<BlogView usersList={users} blogsList={blogs} />}></Route>
 					</Routes>
-				</div>
+				</>
 			)}
-		</div>
+		</>
 	);
 };
 
