@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useMatch } from "react-router-dom";
-import { removeBlog, updateBlog } from "../reducers/blogReducer";
+import { addCommentBlog, removeBlog, updateBlog } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
 import Notification from "./Notification";
 
@@ -10,6 +10,7 @@ const blogView = ({ blogsList, usersList }) => {
 		return null;
 	}
 
+	const [comments, setComments] = useState("");
 	const buttonStyle = {
 		marginBottom: "1rem",
 		marginLeft: "5px",
@@ -28,14 +29,12 @@ const blogView = ({ blogsList, usersList }) => {
 
 	const match = useMatch("/blogs/:id");
 	const blog = match ? blogsList.find((blog) => blog.id === match.params.id) : null;
-	console.log(match.params.id);
 
 	const handleLikes = (blog) => {
 		dispatch(updateBlog(blog));
 	};
 	const getBlogOwner = (id) => {
 		const owner = usersList.users.find((user) => user.id === id);
-		console.log(blog, blog.user, usersList);
 		return owner.name;
 	};
 
@@ -48,6 +47,15 @@ const blogView = ({ blogsList, usersList }) => {
 				<Notification />;
 			}
 		}
+	};
+
+	const addComments = (event, blog) => {
+		event.preventDefault();
+		const newBlog = {
+			...blog,
+			comments,
+		};
+		dispatch(addCommentBlog(newBlog));
 	};
 	return (
 		<>
@@ -64,9 +72,21 @@ const blogView = ({ blogsList, usersList }) => {
 				<p>Posted by {getBlogOwner(blog.user)}</p>
 				<div>
 					<h3>Comments</h3>
+					<form onSubmit={(event) => addComments(event, blog)}>
+						<label></label>
+						<input
+							type="text"
+							placeholder="New Comment"
+							value={comments}
+							onChange={({ target }) => setComments(target.value)}
+						></input>
+						<button id="submit-blog" type="submit">
+							Post comment
+						</button>
+					</form>
 					<ul>
-						{blog.comments.map((comment, index) => (
-							<li key={index}>{comment}</li>
+						{blog.comments.map((comments, index) => (
+							<li key={index}>{comments}</li>
 						))}
 					</ul>
 				</div>

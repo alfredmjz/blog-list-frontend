@@ -29,6 +29,12 @@ const update = async (newObject) => {
 	return response.data;
 };
 
+const updateComments = async (existingBlog) => {
+	const newUrl = baseUrl + "/" + existingBlog.id + "/comments";
+	const response = await axios.put(newUrl, existingBlog);
+	return response.data;
+};
+
 const remove = async (newObject, userObject) => {
 	try {
 		const config = { Authorization: token, "Content-Type": "application/json" };
@@ -41,5 +47,5 @@ const remove = async (newObject, userObject) => {
 	}
 };
 
-const toExport = { getAll, create, update, remove, setToken };
+const toExport = { getAll, create, update, remove, setToken, updateComments };
 export default toExport;

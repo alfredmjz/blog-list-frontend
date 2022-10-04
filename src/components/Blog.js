@@ -12,7 +12,6 @@ const Blog = ({ blogs }) => {
 	return (
 		<div id="list-of-blogs">
 			{blogs.map((blog) => {
-				console.log(blog.id);
 				return (
 					<div key={blog.id} style={blogStyle}>
 						<Link className="blog-title" to={`/blogs/${blog.id}`}>

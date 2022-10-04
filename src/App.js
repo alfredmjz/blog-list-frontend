@@ -1,9 +1,6 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-/* eslint-disable indent */
-/* eslint-disable no-unused-vars */
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Route, Routes, Link, useNavigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
@@ -16,7 +13,7 @@ import blogService from "./services/blogs";
 
 import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog } from "./reducers/blogReducer";
-import { initializeUsers, logoutUser } from "./reducers/userReducer";
+import { initializeUsers } from "./reducers/userReducer";
 import Summary from "./components/Summary";
 import UserView from "./components/UserView";
 import BlogView from "./components/BlogView";
@@ -32,30 +29,29 @@ const App = () => {
 	});
 
 	const dispatch = useDispatch();
-	useEffect(() => {
-		dispatch(initializeBlogs());
-	}, [dispatch]);
 
 	useEffect(() => {
 		const hours = 1; // to clear the localStorage after 1 hour
 		// (if someone want to clear after 8hrs simply change hours=8)
 		const now = new Date().getTime();
 		const setupTime = window.localStorage.getItem("setupTime");
-		if (!setupTime) {
-			window.localStorage.setItem("setupTime", now);
-		} else {
-			if (!users.loginUser || now - setupTime > hours * 60 * 60 * 1000) {
-				window.localStorage.clear();
-				window.localStorage.setItem("setupTime", now);
-			}
-		}
-
 		const loggedUserJSON = window.localStorage.getItem("loggedUser");
+
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
 			blogService.setToken(user.token);
+			dispatch(initializeUsers(user));
 		}
-	}, []);
+
+		if (!setupTime) {
+			window.localStorage.setItem("setupTime", now);
+		} else if (!loggedUserJSON || now - setupTime > hours * 60 * 60 * 1000) {
+			window.localStorage.clear();
+			window.localStorage.setItem("setupTime", now);
+		}
+
+		dispatch(initializeBlogs());
+	}, [dispatch]);
 
 	const blogFormRef = useRef();
 	const addNewBlog = async (blogObject) => {
