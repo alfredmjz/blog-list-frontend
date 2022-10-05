@@ -29,7 +29,7 @@ const Togglable = forwardRef((props, refs) => {
 				{props.children}
 				<Button
 					variant="secondary"
-					style={{ position: "absolute", bottom: "0", left: "6%" }}
+					style={{ position: "absolute", bottom: "0", left: "8%" }}
 					onClick={toggleVisibility}
 				>
 					Cancel

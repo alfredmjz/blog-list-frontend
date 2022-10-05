@@ -10,15 +10,17 @@ import Blog from "./components/Blog";
 
 import loginService from "./services/login";
 import blogService from "./services/blogs";
+import userService from "./services/user";
 
 import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs, createBlog, removeBlog } from "./reducers/blogReducer";
-import { initializeUsers } from "./reducers/userReducer";
+import { initializeUsers, newRegistration } from "./reducers/userReducer";
 import Summary from "./components/Summary";
 import UserView from "./components/UserView";
 import BlogView from "./components/BlogView";
 import Header from "./components/Header";
 import { Container } from "react-bootstrap";
+import RegisterForm from "./components/RegisterForm";
 
 const App = () => {
 	const blogs = useSelector((state) => {
@@ -45,7 +47,6 @@ const App = () => {
 			const user = JSON.parse(loggedUserJSON);
 			blogService.setToken(user.token);
 			loginUserRef.current = user;
-			console.log("effect:", loginUserRef.current);
 			dispatch(initializeUsers(user));
 		}
 
@@ -99,6 +100,20 @@ const App = () => {
 		}
 	};
 
+	const userRegister = async (newUser) => {
+		try {
+			const response = await userService.register(newUser);
+			const registeredUser = response.loginUser;
+			window.localStorage.setItem("loggedUser", JSON.stringify(registeredUser));
+			blogService.setToken(registeredUser.token);
+			loginUserRef.current = registeredUser;
+			dispatch(newRegistration(response));
+		} catch (error) {
+			const msg = "Username must be unique";
+			dispatch(setNotification(msg, 5, false));
+		}
+	};
+
 	const displayBlogs = () => {
 		return (
 			<Container className="justify-content-center text-left mt-5">
@@ -115,10 +130,13 @@ const App = () => {
 	const verifyLogin = () => {
 		return (
 			<Container>
-				<h1>Log in to your account</h1>
+				<h1>Log in or Register a new account</h1>
 				<Notification />
 				<Togglable buttonLabel="Login">
 					<LoginForm userLogin={userLogin} />
+				</Togglable>
+				<Togglable buttonLabel="Register">
+					<RegisterForm userRegister={userRegister} />
 				</Togglable>
 			</Container>
 		);

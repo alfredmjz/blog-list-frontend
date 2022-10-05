@@ -6,5 +6,11 @@ const getUsers = () => {
 	return request.then((response) => response.data);
 };
 
-const toExport = { getUsers };
+const register = async (newUser) => {
+	const newUrl = baseUrl + "/register";
+	const response = await axios.post(newUrl, newUser);
+	return response.data;
+};
+
+const toExport = { getUsers, register };
 export default toExport;

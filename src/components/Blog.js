@@ -16,9 +16,7 @@ const Blog = ({ users, blogs }) => {
 									{blog.title}
 								</Link>
 							</td>
-							<td style={{ textAlign: "right", fontSize: "0.8rem", color: "rgba(0,0,0,0.5)" }}>
-								<tiny>Posted by {username}</tiny>
-							</td>
+							<td style={{ textAlign: "right", fontSize: "0.8rem", color: "rgba(0,0,0,0.5)" }}>Posted by {username}</td>
 						</tr>
 					);
 				})}
