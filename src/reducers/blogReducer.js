@@ -26,7 +26,8 @@ const blogSlice = createSlice({
 			});
 		},
 		appendBlog(state, action) {
-			state.data.push(action.payload);
+			state.status = action.payload.status;
+			state.data.push(action.payload.data);
 		},
 		setBlog(state, action) {
 			return action.payload;
@@ -69,12 +70,16 @@ export const addCommentBlog = (updatedObj) => {
 
 export const removeBlog = (blogObj, users) => {
 	return async (dispatch) => {
-		const userObj = users.users.find((user) => user.username === users.loginUser.username);
-		const deleteResponse = await blogService.remove(blogObj, userObj);
-		const response = await blogService.getAll();
-		const sorted = response.data.sort((a, b) => b.likes - a.likes);
-		const payload = { status: deleteResponse.status, data: sorted };
-		dispatch(setBlog(payload));
+		try {
+			const userObj = users.users.find((user) => user.username === users.loginUser.username);
+			const deleteResponse = await blogService.remove(blogObj, userObj);
+			const response = await blogService.getAll();
+			const sorted = response.data.sort((a, b) => b.likes - a.likes);
+			const payload = { status: deleteResponse.status, data: sorted };
+			dispatch(setBlog(payload));
+		} catch (err) {
+			console.error(err);
+		}
 	};
 };
 

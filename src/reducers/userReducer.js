@@ -26,5 +26,6 @@ export const initializeUsers = (loginUser) => {
 export const logout = () => {
 	return (dispatch) => dispatch(logoutUser());
 };
+
 export const { setUser, logoutUser } = userSlice.actions;
 export default userSlice.reducer;

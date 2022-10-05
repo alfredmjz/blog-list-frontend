@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
@@ -12,7 +12,7 @@ import loginService from "./services/login";
 import blogService from "./services/blogs";
 
 import { setNotification } from "./reducers/notificationReducer";
-import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import { initializeBlogs, createBlog, removeBlog } from "./reducers/blogReducer";
 import { initializeUsers } from "./reducers/userReducer";
 import Summary from "./components/Summary";
 import UserView from "./components/UserView";
@@ -30,6 +30,9 @@ const App = () => {
 	});
 
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const loginUserRef = useRef();
+	const blogFormRef = useRef();
 
 	useEffect(() => {
 		const hours = 1; // to clear the localStorage after 1 hour
@@ -41,6 +44,8 @@ const App = () => {
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
 			blogService.setToken(user.token);
+			loginUserRef.current = user;
+			console.log("effect:", loginUserRef.current);
 			dispatch(initializeUsers(user));
 		}
 
@@ -54,16 +59,30 @@ const App = () => {
 		dispatch(initializeBlogs());
 	}, [dispatch]);
 
-	const blogFormRef = useRef();
 	const addNewBlog = async (blogObject) => {
 		try {
 			blogFormRef.current.toggleVisibility();
 			const msg = `"${blogObject.title}" by ${blogObject.author} has been added!`;
 			dispatch(createBlog(blogObject));
+			dispatch(initializeUsers({ ...loginUserRef.current }));
 			dispatch(setNotification(msg, 5, true));
 		} catch (error) {
 			const msg = `${blogObject.title} not added. Try again later`;
 			dispatch(setNotification(msg, 5, false));
+		}
+	};
+
+	const removeExistingBlog = async (blogToRemove) => {
+		if (window.confirm(`Remove "${blogToRemove.title}" by ${blogToRemove.author}`)) {
+			dispatch(removeBlog(blogToRemove, users));
+			if (blogs.status && blogs.status === 401) {
+				const msg = "Only blog owner may delete this post";
+				dispatch(setNotification(msg, 5, false));
+				<Notification />;
+			} else {
+				dispatch(initializeUsers({ ...loginUserRef.current }));
+				navigate("/");
+			}
 		}
 	};
 
@@ -72,6 +91,7 @@ const App = () => {
 			const inputUser = await loginService.login(userCredentials);
 			window.localStorage.setItem("loggedUser", JSON.stringify(inputUser));
 			blogService.setToken(inputUser.token);
+			loginUserRef.current = inputUser;
 			dispatch(initializeUsers(inputUser));
 		} catch (error) {
 			const msg = "Username/Password is wrong";
@@ -87,7 +107,7 @@ const App = () => {
 				<Togglable buttonLabel="Post a blog" ref={blogFormRef}>
 					<BlogForm createBlog={addNewBlog} />
 				</Togglable>
-				<Blog blogs={blogs.data} />
+				<Blog users={users.users} blogs={blogs.data} />
 			</Container>
 		);
 	};
@@ -118,7 +138,10 @@ const App = () => {
 						<Route path="/" element={<HomeView />}></Route>
 						<Route path="/users" element={<Summary users={users} />}></Route>
 						<Route path="/users/:id" element={<UserView usersList={users} blogsList={blogs.data} />}></Route>
-						<Route path="/blogs/:id" element={<BlogView usersList={users} fullBlogsList={blogs} />}></Route>
+						<Route
+							path="/blogs/:id"
+							element={<BlogView usersList={users} fullBlogsList={blogs} deleteBlog={removeExistingBlog} />}
+						></Route>
 					</Routes>
 				</>
 			)}

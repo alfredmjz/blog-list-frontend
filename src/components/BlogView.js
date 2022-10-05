@@ -1,41 +1,31 @@
 import React, { useState } from "react";
 import { Form, Button, Card, Container, Stack } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { useMatch, useNavigate } from "react-router-dom";
-import { addCommentBlog, removeBlog, updateBlog } from "../reducers/blogReducer";
-import { setNotification } from "../reducers/notificationReducer";
-import Notification from "./Notification";
+import { useMatch } from "react-router-dom";
+import { addCommentBlog, updateBlog } from "../reducers/blogReducer";
 
-const blogView = ({ fullBlogsList, usersList }) => {
+const blogView = ({ fullBlogsList, usersList, deleteBlog }) => {
 	if (!fullBlogsList.data) {
 		return null;
 	}
 
 	const [comments, setComments] = useState("");
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
 
 	const match = useMatch("/blogs/:id");
 	const blog = match ? fullBlogsList.data.find((blog) => blog.id === match.params.id) : null;
 	const handleLikes = (blog) => {
 		dispatch(updateBlog(blog));
 	};
+
 	const getBlogOwner = (id) => {
 		const owner = usersList.users.find((user) => user.id === id);
 		return owner.name;
 	};
 
-	const handleDeletion = (blog) => {
-		if (window.confirm(`Remove "${blog.title}" by ${blog.author}`)) {
-			dispatch(removeBlog(blog, usersList));
-			if (fullBlogsList.status && fullBlogsList.status === 401) {
-				const msg = "Only blog owner may delete this post";
-				dispatch(setNotification(msg, 5, false));
-				<Notification />;
-			} else {
-				navigate("/");
-			}
-		}
+	const handleDeletion = (event, blogToRemove) => {
+		event.preventDefault();
+		deleteBlog(blogToRemove);
 	};
 
 	const addComments = (event, blog) => {
@@ -44,8 +34,10 @@ const blogView = ({ fullBlogsList, usersList }) => {
 			...blog,
 			comments,
 		};
+		setComments("");
 		dispatch(addCommentBlog(newBlog));
 	};
+
 	return (
 		<Container className="mt-5">
 			<Card>
@@ -61,7 +53,9 @@ const blogView = ({ fullBlogsList, usersList }) => {
 						</Button>
 					</Card.Text>
 					<Card.Link href={blog.url}>{blog.url}</Card.Link>
-					<Card.Text>Posted by {getBlogOwner(blog.user)}</Card.Text>
+					<Card.Text>
+						Posted by <b>{getBlogOwner(blog.user)}</b>
+					</Card.Text>
 				</Card.Body>
 			</Card>
 
@@ -81,7 +75,7 @@ const blogView = ({ fullBlogsList, usersList }) => {
 					</Form.Group>
 				</Form>
 				<div className="vr" />
-				<Button variant="primary" onClick={(event) => addComments(event, blog)}>
+				<Button variant="primary" type="submit" onClick={(event) => addComments(event, blog)}>
 					Post comment
 				</Button>
 			</Stack>
@@ -90,7 +84,7 @@ const blogView = ({ fullBlogsList, usersList }) => {
 					<li key={index}>{comments}</li>
 				))}
 			</ul>
-			<Button variant="danger" onClick={() => handleDeletion(blog)}>
+			<Button variant="danger" onClick={(event) => handleDeletion(event, blog)}>
 				Delete
 			</Button>
 		</Container>

@@ -20,7 +20,7 @@ const BlogForm = ({ createBlog }) => {
 	};
 
 	return (
-		<Form.Floating onSubmit={addBlog}>
+		<Form onSubmit={addBlog}>
 			<h2>Create New</h2>
 			<Form.Group className="mb-2">
 				<label htmlFor="title"></label>
@@ -52,10 +52,10 @@ const BlogForm = ({ createBlog }) => {
 					onChange={({ target }) => setURL(target.value)}
 				/>
 			</Form.Group>
-			<Button variant="primary" type="submit">
+			<Button type="submit" variant="primary">
 				Add
 			</Button>
-		</Form.Floating>
+		</Form>
 	);
 };
 
