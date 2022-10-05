@@ -17,7 +17,7 @@ const create = async (newObject) => {
 		headers: { Authorization: token },
 	};
 	const response = await axios.post(baseUrl, newObject, config);
-	return response.data;
+	return response;
 };
 
 const update = async (newObject) => {
@@ -26,25 +26,20 @@ const update = async (newObject) => {
 	};
 	const newUrl = baseUrl + "/" + newObject.id;
 	const response = await axios.put(newUrl, newObject, config);
-	return response.data;
+	return response;
 };
 
 const updateComments = async (existingBlog) => {
 	const newUrl = baseUrl + "/" + existingBlog.id + "/comments";
 	const response = await axios.put(newUrl, existingBlog);
-	return response.data;
+	return response;
 };
 
 const remove = async (newObject, userObject) => {
-	try {
-		const config = { Authorization: token, "Content-Type": "application/json" };
-		const newUrl = baseUrl + "/" + newObject.id;
-		const response = await axios.delete(newUrl, { headers: config, data: userObject });
-		return response;
-	} catch (error) {
-		console.error(error);
-		return 401;
-	}
+	const config = { Authorization: token, "Content-Type": "application/json" };
+	const newUrl = baseUrl + "/" + newObject.id;
+	const response = await axios.delete(newUrl, { headers: config, data: userObject });
+	return response;
 };
 
 const toExport = { getAll, create, update, remove, setToken, updateComments };

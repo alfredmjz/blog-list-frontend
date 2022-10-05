@@ -22,7 +22,6 @@ import { Container } from "react-bootstrap";
 
 const App = () => {
 	const blogs = useSelector((state) => {
-		console.log(state);
 		return state.blogs;
 	});
 
@@ -81,7 +80,6 @@ const App = () => {
 	};
 
 	const displayBlogs = () => {
-		console.log(blogs);
 		return (
 			<Container className="justify-content-center text-left mt-5">
 				<Notification />

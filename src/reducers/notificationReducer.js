@@ -7,7 +7,6 @@ const notificationSlice = createSlice({
 	initialState,
 	reducers: {
 		add(state, action) {
-			console.log(state, action);
 			if (state.timer !== null) {
 				clearTimeout(state.timer);
 			}

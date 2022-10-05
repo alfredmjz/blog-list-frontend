@@ -2,7 +2,6 @@ import { Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const Blog = ({ blogs }) => {
-	console.log(blogs);
 	return (
 		<Table striped>
 			<tbody>

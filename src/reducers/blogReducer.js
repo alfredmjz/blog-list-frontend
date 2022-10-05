@@ -3,10 +3,10 @@ import blogService from "../services/blogs";
 
 const blogSlice = createSlice({
 	name: "blogs",
-	initialState: [],
+	initialState: { status: null, data: [] },
 	reducers: {
 		updateLikes(state, action) {
-			const id = action.payload.id;
+			const id = action.payload.data.id;
 			state.data
 				.map((blog) => {
 					if (blog.id === id) {
@@ -17,10 +17,10 @@ const blogSlice = createSlice({
 				.sort((a, b) => b.likes - a.likes);
 		},
 		updateComments(state, action) {
-			const id = action.payload.id;
+			const id = action.payload.data.id;
 			state.data.map((blog) => {
 				if (blog.id === id) {
-					blog.comments = action.payload.comments;
+					blog.comments = action.payload.data.comments;
 				}
 				return blog;
 			});
@@ -39,39 +39,41 @@ export const initializeBlogs = () => {
 		const response = await blogService.getAll();
 		const sorted = response.data.sort((a, b) => b.likes - a.likes);
 		const payload = { status: response.status, data: sorted };
-		console.log(payload);
 		dispatch(setBlog(payload));
 	};
 };
 
 export const createBlog = (content) => {
 	return async (dispatch) => {
-		const newBlog = await blogService.create(content);
-		dispatch(appendBlog(newBlog));
+		const response = await blogService.create(content);
+		const payload = { status: response.status, data: response.data };
+		dispatch(appendBlog(payload));
 	};
 };
 
 export const updateBlog = (updatedObj) => {
 	return async (dispatch) => {
 		const response = await blogService.update({ ...updatedObj, likes: updatedObj.likes + 1 });
-		dispatch(updateLikes(response));
+		const payload = { status: response.status, data: response.data };
+		dispatch(updateLikes(payload));
 	};
 };
 
 export const addCommentBlog = (updatedObj) => {
 	return async (dispatch) => {
 		const response = await blogService.updateComments(updatedObj);
-		dispatch(updateComments(response));
+		const payload = { status: response.status, data: response.data };
+		dispatch(updateComments(payload));
 	};
 };
 
 export const removeBlog = (blogObj, users) => {
 	return async (dispatch) => {
 		const userObj = users.users.find((user) => user.username === users.loginUser.username);
-		const response = await blogService.remove(blogObj, userObj);
-		const blogs = await blogService.getAll();
-		const sorted = blogs.data.sort((a, b) => b.likes - a.likes);
-		const payload = { status: response, data: sorted };
+		const deleteResponse = await blogService.remove(blogObj, userObj);
+		const response = await blogService.getAll();
+		const sorted = response.data.sort((a, b) => b.likes - a.likes);
+		const payload = { status: deleteResponse.status, data: sorted };
 		dispatch(setBlog(payload));
 	};
 };

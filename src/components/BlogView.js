@@ -17,7 +17,6 @@ const blogView = ({ fullBlogsList, usersList }) => {
 
 	const match = useMatch("/blogs/:id");
 	const blog = match ? fullBlogsList.data.find((blog) => blog.id === match.params.id) : null;
-	console.log(blog, fullBlogsList.data);
 	const handleLikes = (blog) => {
 		dispatch(updateBlog(blog));
 	};
@@ -29,7 +28,6 @@ const blogView = ({ fullBlogsList, usersList }) => {
 	const handleDeletion = (blog) => {
 		if (window.confirm(`Remove "${blog.title}" by ${blog.author}`)) {
 			dispatch(removeBlog(blog, usersList));
-			console.log(fullBlogsList);
 			if (fullBlogsList.status && fullBlogsList.status === 401) {
 				const msg = "Only blog owner may delete this post";
 				dispatch(setNotification(msg, 5, false));
@@ -46,7 +44,6 @@ const blogView = ({ fullBlogsList, usersList }) => {
 			...blog,
 			comments,
 		};
-		console.log("here");
 		dispatch(addCommentBlog(newBlog));
 	};
 	return (
